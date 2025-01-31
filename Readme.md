@@ -2,12 +2,12 @@
 
 ## 🚀 Clonar el repositorio
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/GuzmanrData/challange-1.git
 ```
 
 ## 📂 Entrar en la carpeta del proyecto
 ```bash
-cd <NOMBRE_DEL_PROYECTO>
+cd challange-1
 ```
 
 ## 🐳 Levantar los contenedores con Docker (asegúrate de tener Docker corriendo en local)
