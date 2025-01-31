@@ -1,0 +1,6 @@
+pgadmin/
+pgdata/
+
+
+./pgadmin
+./pgdata

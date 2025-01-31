@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.3
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coding_challenge
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./scripts/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+  pdAdmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8081:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@google.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+      - ./pgadmin:/certs/server.cert
+      - ./pgadmin:/certs/server.key
+
+  backend:
+    build: ./backend
+    container_name: fastapi_backend
+    restart: always
+    volumes:
+      - ./backend:/app  # <-- Monta la carpeta local en el contenedor
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/coding_challenge
+    ports:
+      - "8000:8000"
+
+  spark:
+    build: ./spark
+    container_name: spark_cluster
+    restart: always
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    depends_on:
+      - postgres
+      
+volumes:
+  pgdata:
