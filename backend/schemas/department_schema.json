@@ -1,0 +1,7 @@
+{
+    "fields": [
+      { "name": "id", "type": "integer", "nullable": false, "description": "Id of the department" },
+      { "name": "department", "type": "string", "nullable": false, "description": "Name of the department" }
+    ]
+  }
+  

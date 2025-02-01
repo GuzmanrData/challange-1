@@ -14,6 +14,8 @@ services:
       - ./scripts/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+    networks:
+      - coding_challenge_network  
   pdAdmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -29,6 +31,8 @@ services:
       - ./pgadmin:/var/lib/pgadmin
       - ./pgadmin:/certs/server.cert
       - ./pgadmin:/certs/server.key
+    networks:
+      - coding_challenge_network
 
   backend:
     build: ./backend
@@ -42,16 +46,12 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/coding_challenge
     ports:
       - "8000:8000"
+    networks:
+      - coding_challenge_network
 
-  spark:
-    build: ./spark
-    container_name: spark_cluster
-    restart: always
-    ports:
-      - "8080:8080"
-      - "7077:7077"
-    depends_on:
-      - postgres
-      
+networks:
+  coding_challenge_network:
+    driver: bridge
+
 volumes:
   pgdata:
