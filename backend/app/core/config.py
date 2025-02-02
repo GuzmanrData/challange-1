@@ -1,6 +1,5 @@
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, TimestampType
 import json
-
 import os
 
 # Directorios base
@@ -18,6 +17,9 @@ POSTGRES_URL = "jdbc:postgresql://postgres_db:5432/coding_challenge"
 POSTGRES_USER = "user"
 POSTGRES_PASSWORD = "password"
 POSTGRES_DRIVER = "org.postgresql.Driver"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@postgres_db:5432/coding_challenge")
+BATCH_SIZE_LIMIT = 1000
+
 
 def json_to_struct(schema_path: str) -> StructType:
     """Convierte un archivo JSON a StructType de PySpark."""
