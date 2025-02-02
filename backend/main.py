@@ -8,7 +8,7 @@ import json
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, TimestampType
 from pyspark.sql.functions import lit, current_timestamp, col, length
 import traceback
-from app.api import avro_routes
+from app.api import avro_routes, database_routes
 
 
 
@@ -43,6 +43,7 @@ app = FastAPI()
 
 # Incluir las rutas del API
 app.include_router(avro_routes.router)
+app.include_router(database_routes.router)
 
 
 @app.post("/upload-csv/")
