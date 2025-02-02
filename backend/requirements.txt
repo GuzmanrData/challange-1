@@ -5,3 +5,5 @@ pandas
 fastavro
 pyspark
 psycopg2-binary
+requests
+httpx

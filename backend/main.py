@@ -8,6 +8,7 @@ import json
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, TimestampType
 from pyspark.sql.functions import lit, current_timestamp, col, length
 import traceback
+from app.api import avro_routes
 
 
 
@@ -39,6 +40,9 @@ EMPLOYEES_SCHEMA_PATH = os.path.join("schemas", "employees_schema.json")
 JOBS_SCHEMA_PATH = os.path.join("schemas", "jobs_schema.json")
 
 app = FastAPI()
+
+# Incluir las rutas del API
+app.include_router(avro_routes.router)
 
 
 @app.post("/upload-csv/")
@@ -94,16 +98,55 @@ async def upload_csv(
         .withColumn("process_date", lit(process_date))\
         .withColumn("load_timestamp", current_timestamp())
         
+        
+        department_df.write.partitionBy("process_date") \
+            .mode("overwrite") \
+            .format("avro") \
+            .save(SILVER_PATH + "/departments")
+            
+        
+        employees_df.write \
+            .partitionBy("process_date") \
+            .mode("overwrite") \
+            .format("avro") \
+            .save(SILVER_PATH + "/employees")
+            
+        jobs_df.write \
+            .partitionBy("process_date") \
+            .mode("overwrite") \
+            .format("avro") \
+            .save(SILVER_PATH + "/jobs")
+
+        
 
         # Cargar la data en postgreSQL
         errors = []
+        jobs_df.drop("process_date", "load_timestamp") \
+            .filter(col("job").isNotNull()) \
+            .write \
+            .mode("append") \
+            .format("jdbc") \
+                .option("url", "jdbc:postgresql://postgres_db:5432/coding_challenge") \
+                .option("dbtable", "jobs") \
+                .option("user", "user") \
+                .option("password", "password") \
+                .option("driver", "org.postgresql.Driver") \
+                .save()
+        print("✅ Jobs guardado correctamente en PostgreSQL.")
         
         
-#ejecutar esta consulta: TRUNCATE TABLE hired_employees RESTART IDENTITY CASCADE;
-         
-        
-#TRUNCATE TABLE jobs RESTART IDENTITY CASCADE;
-#TRUNCATE TABLE departments RESTART IDENTITY CASCADE;
+        department_df.drop("process_date", "load_timestamp") \
+            .filter(col("department").isNotNull()) \
+            .write \
+            .mode("append") \
+            .format("jdbc") \
+            .option("url", "jdbc:postgresql://postgres_db:5432/coding_challenge") \
+            .option("dbtable", "departments") \
+            .option("user", "user") \
+            .option("password", "password") \
+            .option("driver", "org.postgresql.Driver") \
+            .save()
+        print("✅ Departments guardado correctamente en PostgreSQL.")
      
         employees_df.show()
         
@@ -146,6 +189,8 @@ def healthcheck(db: Session = Depends(get_db)):
     except Exception as e:
         return {"error": str(e)}
     
+
+ 
     
     
     
