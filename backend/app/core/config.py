@@ -7,6 +7,7 @@ LANDING_PATH = "landing"
 SILVER_PATH = "silver"
 GOLD_PATH = "gold"
 SCHEMA_PATH = "schemas"
+BACKUP_PATH = "backup"
 
 # Crear carpetas si no existen
 for path in [LANDING_PATH, SILVER_PATH, GOLD_PATH, SCHEMA_PATH]:
@@ -19,6 +20,7 @@ POSTGRES_PASSWORD = "password"
 POSTGRES_DRIVER = "org.postgresql.Driver"
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@postgres_db:5432/coding_challenge")
 BATCH_SIZE_LIMIT = 1000
+
 
 
 def json_to_struct(schema_path: str) -> StructType:

@@ -55,7 +55,6 @@ async def load_data(request: LoadDataRequest):
         # Guardar en PostgreSQL
         load_data_to_postgres(cleanDf, request.table_name)
 
-        spark.stop()
 
         return {"message": f"{request.table_name} loaded successfully"}
 
@@ -63,6 +62,10 @@ async def load_data(request: LoadDataRequest):
         print(f"❌ Error al cargar {request.table_name}")
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if spark:
+            spark.stop()
+            print("🛑 Spark session cerrada.")
 
 @router.post("/batch-load-historical-data/")
 async def batch_load_historical_data(data: List[LoadDataRequest]):

@@ -26,10 +26,13 @@ def process_and_save_avro(input_path: str, output_path: str, schema_path: str, p
         df.write.partitionBy("process_date") .mode("overwrite").format("avro").save(output_path)
         print(f"✅ Archivo guardado en {output_path}")
 
-        spark.stop()
         return output_path
 
     except Exception as e:
         print("Error en el proceso de conversión a Avro")
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if spark:
+            spark.stop()
+            print("🛑 Spark session cerrada.")

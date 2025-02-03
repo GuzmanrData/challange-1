@@ -36,7 +36,7 @@ def insert_batch_data(db: Session, request: BatchInsertRequest):
                         )
                     
 
-            # Insertar trabajos evitando duplicados (buscando por nombre)
+        # Insertar trabajos evitando duplicados (buscando por nombre)
         if request.jobs:
             db.execute(text("SELECT setval('jobs_id_seq', COALESCE((SELECT MAX(id) FROM jobs), 1), false);"))
             db.execute(text("SELECT nextval('jobs_id_seq');"))

@@ -1,5 +1,3 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
 from app.core.config import POSTGRES_URL, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DRIVER
 import traceback
 from fastapi import HTTPException
